@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>特征相关分析</title>
+</head>
+<style>
+ body{
+     margin:0;
+     background-color: rgb(212, 247, 255);
+ 	background-image: url("https://bpic.588ku.com/back_pic/05/81/06/575c31f5daecd70.jpg");
+ 	background-size: contain;
+ 	background-attachment: fixed;
+ }
+ #all{
+	 white-space: nowrap;
+	 overflow-x: auto;
+
+     margin:0 auto;
+     box-shadow:0px 0px 0px 0px #000;
+     min-height: 100%;
+
+     background-color: rgb(244, 255, 255, 0.6);
+ 	 backdrop-filter: blur(16px) saturate(100%);
+     font-size:18px;
+     font-weight:500;
+
+ }
+ .answer{
+     width:100%;
+     height:auto;
+
+     font-size:18px;
+     font-weight:500;
+     color:#4a404f;
+ }
+ .answer:hover{
+
+ }
+
+ .analysisContent{
+	 padding: 8px;
+
+ }
+
+ .analysisContent div{
+	 display: inline-block;
+	 width: 576px;
+	 overflow: auto;
+	 vertical-align: top;
+	 margin: 12px;
+	 padding: 24px;
+
+	 background-color: rgb(244, 255, 255, 0.6);
+	 backdrop-filter: blur(16px) saturate(100%);
+	 border-radius: 16px;
+	 border: 2px solid rgb(93, 124, 195)
+ }
+
+ .analysisContent div:hover{
+ 	border-bottom: 3px solid rgb(95, 140, 213);
+ }
+
+ .title{
+	padding: 8px;
+	display: inline-block;
+	border-bottom: 2px solid rgb(95, 140, 213, 0.27);
+}
+
+ .title div{
+	 margin: 12px;
+	 padding: 0 24px;
+	 width: 576px;
+	 display: inline-flex;
+ }
+
+ h1{
+ 	text-align: center;
+ 	border-radius: 20px;
+ 	left: 50%;
+ 	display: inline-block;
+ 	color: rgb(68, 64, 181);
+ 	margin-left: -288px;
+ 	position: relative;
+ 	padding: 20px;
+ }
+
+ h2{
+ 	margin: 0;
+ }
+
+ h3{
+	 margin: 0;
+	 font-size: 24px;
+ }
+
+ h4{
+	 margin: 0;
+	 font-size: 24px;
+ }
+
+ table{
+ 	border: 0;
+
+	max-width: 100%;
+	display: block;
+	overflow: auto;
+ }
+
+ .sort{
+ 	color: rgb(93, 124, 195);
+ 	display: inline-block;
+ 	margin: 0;
+ }
+
+ #furtherStep{
+	 display: inline-block;
+	 margin-left: -480px;
+	 position: relative;
+	 left: 50%;
+	 width: 960px;
+
+	 margin-top: 32px;
+	 padding: 24px;
+
+	 backdrop-filter: blur(16px) saturate(100%);
+	 background-color: rgba(255, 255, 255, 0.7);
+	 border-radius: 18px;
+ }
+
+ #furtherStep *{
+	 margin: 0;
+	 padding: 0;
+ }
+
+ #furtherStep h3{
+	 margin: 24px 0;
+	 font-size: 30px;
+ }
+
+
+ #furtherStep .entry{
+ 	margin: 16px 24px;
+ 	padding: 24px;
+ 	padding-top: 12px;
+ 	border-radius: 8px;
+ 	border: 1px solid rgb(95, 140, 213, 0.2);
+ }
+
+ #furtherStep .entry:hover{
+ 	background-color: rgb(95, 140, 213, 0.1);
+ 	transition-duration: 0.3s;
+ }
+
+ input[type=text]{
+	 height: 16px;
+ }
+
+ #furtherStep p{
+	 margin: 12px 0;
+	 font-weight: 600;
+	 font-size: 20px;
+ }
+
+ #furtherStep .btn{
+ 	margin-top: 24px;
+ 	font-size: 18px;
+ 	float: right;
+
+     width:100px;
+     height:60px;
+     background-color:#eaf5c2;
+     box-shadow:0px 0px 0px 0px #000;
+     border-radius:5px;
+     transition:width 0.2s ease,height 0.2s ease,background-color 0.2s ease-in-out,box-shadow 0.5s ease,border-radius 0.8s ease;
+ }
+
+ #furtherStep .btn:hover{
+     width:125px;
+     height:75px;
+     background-color:#e6c7f5;
+     box-shadow:4px 3px 3px 2px #000;
+
+ }
+
+</style>
+<body>
+    <div id="all">
+		<div class="title">
+			<div>
+				<h3>基于过滤式策略下的低方差过滤的数据特征选择分析结果</h3>
+			</div>
+			<div>
+				<h3>基于过滤式策略下的高相关过滤的数据特征选择分析结果</h3>
+			</div>
+			<div>
+				<h3>基于包裹式策略的数据特征选择分析结果</h3>
+			</div>
+			<div>
+				<h4>基于嵌入式策略的以Lasso回归为基础的特征选择分析结果</h4>
+			</div>
+			<div>
+				<h4>基于嵌入式策略的以岭回归为基础的特征选择分析结果</h4>
+			</div>
+			<div>
+				<h4>基于嵌入式策略的以弹性网为基础的特征选择分析结果</h4>
+			</div>
+		</div>
+
+		<div class="analysisContent">
+			<div>
+				<p>目标变量头部内容：</p>
+				{{vty|safe}}
+				<p>过滤后的特征数据头部内容</p>
+				{{vtx|safe}}
+				<br>
+				<p>原始特征：</p>
+				<ul>
+				    {%for i in vt_head_name%}
+				    <li class="ok">
+				        <strong>{{i}}</strong>
+				    </li>
+				    {% endfor %}
+				</ul>
+				<p>各特征方差：</p>
+				<ul class=list-group">
+				    {% for k,v in VT[3].items() %}
+				    <li class="list-group-item list-group-item-warning">
+				        <strong>{{k}}的方差：{{v}}</strong>
+				    </li>
+				    {% endfor %}
+				</ul>
+				<p>保留的特征索引：{{VT[4]}}</p>
+				<p>过滤后的特征数：{{VT[5]}}</p>
+			</div>
+			<div>
+
+					<p>目标变量的头部内容：</p>
+					{{sky|safe}}
+					<p>过滤后特征数据的头部内容：</p>
+					{{skx|safe}}
+					<p>特征评分：</p>
+					<ul class=list-group">
+					    {% for k,v in SK[2].items() %}
+					    <li class="list-group-item list-group-item-warning">
+					        <strong>{{k}}的特征评分：{{v}}</strong>
+					    </li>
+					    {% endfor %}
+					</ul>
+					<p>特征p值</p>
+					 <ul class=list-group">
+					    {% for k,v in SK[3].items() %}
+					    <li class="list-group-item list-group-item-warning">
+					        <strong>{{k}}的特征p值：{{v}}</strong>
+					    </li>
+					    {% endfor %}
+					</ul>
+					<p>特征选择布尔掩码：</p>
+					{{SK[4]}}
+				</div>
+
+			<div>
+
+					<p>目标变量头部内容：</p>
+					{{rfey|safe}}
+					<p>过滤后的特征数据头部内容</p>
+					{{rfex|safe}}
+					<br>
+					<p>保留的特征：</p>
+					<ul class=list-group">
+					    {% for u in rfe_name %}
+					    <li class="list-group-item list-group-item-warning">
+					        <strong>{{u}}</strong>
+					    </li>
+					    {% endfor %}
+					</ul>
+					<p>特征排名</p>
+					<strong>{{ca|safe}}</strong>
+
+			</div>
+			<div>
+
+					<p>目标变量头部内容：</p>
+					{{LAy|safe}}
+					<p>过滤后的特征数据头部内容：</p>
+					{{LAx|safe}}
+					<p>特征系数：</p>
+					<ul class=list-group">
+					    {% for k,v in LA[2].items() %}
+					    <li class="list-group-item list-group-item-warning">
+					        <strong>{{k}}的特征系数是{{v}}</strong>
+					    </li>
+					    {% endfor %}
+					</ul>
+					<p>截距项：</p>
+					<p class="jiejuxiang">{{LA[3]}}</p>
+					<p>被淘汰的特征：</p>
+					{% for i in LA[4] %}
+					    <li class="list-group-item list-group-item-warning">{{i}}</li>
+					{% endfor %}
+
+			</div>
+			<div>
+				<p>目标变量头部内容：</p>
+				{{LINy|safe}}
+				<p>过滤后的特征数据头部内容：</p>
+				{{LINx|safe}}
+				<p>特征系数：</p>
+				<ul class=list-group">
+				    {% for k,v in LINnum.items() %}
+				    <li class="list-group-item list-group-item-warning">
+				        <strong>{{k}}的特征系数是{{v}}</strong>
+				    </li>
+				    {% endfor %}
+				</ul>
+				<p>截距项：</p>
+				<p class="jiejuxiang">{{LIN[3]}}</p>
+				<p>被筛选掉的特征（基于具体特征的特征系数绝对值的筛选）：</p>
+				<ul class=list-group">
+				    {% for k in LIN[4] %}
+				    <li class="list-group-item list-group-item-warning">
+				        <strong>{{k}}</strong>
+				    </li>
+				    {% endfor %}
+				</ul>
+			</div>
+			<div>
+				<p>目标变量头部内容：</p>
+				{{ELSy|safe}}
+				<p>过滤后的特征数据头部内容：</p>
+				{{ELSx|safe}}
+				<p>特征系数：</p>
+				<ul class=list-group">
+				    {% for k,v in ELS[4].items() %}
+				    <li class="list-group-item list-group-item-warning">
+				        <strong>{{k}}的特征系数是{{v}}</strong>
+				    </li>
+				    {% endfor %}
+				</ul>
+				<p>实际迭代次数：</p>
+				{{ELS[6]}}
+				<p>选中的特征：</p>
+				{% for i in ELS[2] %}
+				    <strong>{{i}}&nbsp;&nbsp;</strong>
+				{% endfor %}
+				<p>被筛选的特征：</p>
+				{% for i in ELS[3] %}
+				    <strong>{{i}}&nbsp;&nbsp;</strong>
+				{% endfor %}
+				<p>截距项</p>
+				{{ELS[5]}}
+
+			</div>
+		</div>
+	</div>
+
+
+	<div id="furtherStep">
+        <h3>您可以选择上述特征选择后的数据进行进一步机器分类学习：</h3>
+        <form action="datago" method="post">
+            <div class="entry">
+				<label><input type="radio" name="type_of_data" checked="checked" value="vt">基于过滤式策略下的低方差过滤数据</label><br>
+				<label><input type="radio" name="type_of_data" value="sk">基于过滤式策略下的高相关过滤数据</label><br>
+				<label><input type="radio" name="type_of_data" value="rfe"></label>基于包裹式策略下的特征选择过滤数据<br>
+				<label><input type="radio" name="type_of_data" value="lasso"></label>基于嵌入式策略下的Lasso回归特征选择过滤数据<br>
+				<label><input type="radio" name="type_of_data" value="lin"></label>基于嵌入式策略下的岭回归特征选择过滤数据<br>
+				<label><input type="radio" name="type_of_data" value="els"></label>基于嵌入式策略下的弹性网特征选择过滤数据<br>
+			</div>
+			<hr>
+
+            <p>开始机器学习之前请您选择输入的参数，当然您也可以直接提交，系统会按默认参数进行学习</p>
+
+			<div class="entry">
+				<p>目标K近邻算法的考虑的最近邻数量（默认为5）</p>
+				<input type="text" name="K" placeholder="5">
+			</div>
+
+			<div class="entry">
+				<p>目标决策树最大深度（默认为3）</p>
+				<input type="text" name="decision_deep" placeholder="3">
+			</div>
+
+			<div class="entry">
+				<p>目标集成学习的分类器种类</p>
+				<label><input type="radio" name="option" value="RandomForestClassifier" checked="checked">随机森林(默认)</label>
+				<label><input type="radio" name="option" value="GradientBoostingClassifier">梯度提升</label>
+				<br /><br />
+				<p>目标集成学习的基学习器数量（默认为100）</p>
+				<input type="text" name="learn_num" placeholder="100">
+				<br /><br />
+				<p>目标集成学习数最大数量（默认为3）</p>
+				<input type="text" name="tree_num" placeholder="3">
+			</div>
+
+			<div class="entry">
+				<p>目标基于人工神经网络的多层感知机隐藏节点结构（请用空格隔开每一层的输入，默认结构为(100,50)</p>
+				<input type="text" name="MLP_num" id="MLP_num" placeholder="100 50">
+				<br /><br />
+				<p>定义隐藏层的激活函数。</p>
+				<p>默认为'relu'</p>
+				<label><input type="radio" name="opt" value="indentity">无激活函数（线性激活）</label>
+				<label><input type="radio" name="opt" value="logistic">逻辑激活函数</label>
+				<label><input type="radio" name="opt" value="tanh">双曲正切激活函数</label>
+				<label><input type="radio" name="opt" value="relu"  checked="checked">修正线性单元</label>
+				<br /><br />
+				<p>定义优化算法，默认为adam</p>
+				<label><input type="radio" name="solver" value="lbfgs">LBFGS</label>
+				<label><input type="radio" name="solver" value="sgd">随机梯度下降</label>
+				<label><input type="radio" name="solver" value="adam" checked="checked">自适应矩估计</label>
+			</div>
+
+			<div class="entry">
+				<p>目标基于支持向量机的向量机惩罚系数（默认为1.0）</p>
+				<input type="text" name="SVC_num" placeholder="1.0">
+				<br /><br />
+				<p>支持向量积指定使用的核函数（默认为高斯核rbf）</p>
+				<label><input type="radio" name="SVC_type" value="linear">线性核</label>
+				<label><input type="radio" name="SVC_type" value="poly">多项式核</label>
+				<label><input type="radio" name="SVC_type" value="rbf" checked="checked">径向基核（高斯核）</label>
+				<label><input type="radio" name="SVC_type" value="sigmoid">Sigmoid核</label>
+				<label><input type="radio" name="SVC_type" value="precomputed">预计算核</label>
+				<label><input type="checkbox" name="SVC_pro" checked="checked" value="on">是否启用概率估计？（默认为启用）</label>
+			</div>
+
+            <button type="submit" class="btn">提交</button>
+
+        </form>
+    </div>
+</body>
+</html>

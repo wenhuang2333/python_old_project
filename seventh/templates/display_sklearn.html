@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>上传的结果,请耐心等待</title>
+    <!-- 引入 Bootstrap CSS -->
+    <!--link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"-->
+</head>
+<style>
+	body{
+		background-color: #edefff;
+	}
+
+	h1{
+		color: rgb(95, 140, 213);
+		margin: 0;
+	}
+
+	strong{
+		margin-top: 18px;
+	}
+
+    .btn{
+		margin-top: 24px;
+		font-size: 18px;
+		float: right;
+
+        width:100px;
+        height:60px;
+        background-color:#eaf5c2;
+        box-shadow:0px 0px 0px 0px #000;
+        border-radius:5px;
+        transition:width 0.5s ease,height 0.5s ease,background-color 2s ease-in-out,box-shadow 0.5s ease,border-radius 0.8s ease;
+    }
+    .btn:hover{
+        width:125px;
+        height:75px;
+        background-color:#e6c7f5;
+        box-shadow:4px 3px 3px 2px #000;
+        border-radius:25px;
+
+    }
+    span{
+        color:red;
+        font-size:25px;
+        font-weight:680;
+    }
+
+	.dataContainer{
+		display: inline-block;
+		overflow-y: auto;
+		position: fixed;
+		width: 60%;
+
+		margin: 32px;
+		border-radius: 24px;
+		backdrop-filter: blur(16px) saturate(100%);
+		border: 1px solid #ddd;
+
+		padding: 32px;
+	}
+
+	.dataContainer table{
+		max-height: 32%;
+		display: inline-block;
+		max-width: 100%;
+		overflow: auto;
+
+		border-radius: 12px;
+
+		border-collapse: collapse;
+	}
+
+	.dataContainer th{
+		background-color: rgb(95, 140, 213);
+		padding: 8px;
+	}
+
+	.dataContainer tr:nth-child(even){
+		background-color: rgb(149, 181, 233);
+	}
+
+	.dataContainer td{
+		padding: 8px;
+	}
+
+	.list-group{
+		list-style-type: none;
+		color: #999;
+	}
+
+	h3{
+		font-size: 32px;
+		padding: 32px;
+		margin: 0;
+		display: inline-block;
+	}
+
+	.entry{
+		margin: 16px 24px;
+		padding: 24px;
+		padding-top: 12px;
+		border-radius: 20px;
+		border: 1px solid rgb(95, 140, 213, 0.2);
+	}
+
+	.entry-warn{
+		margin-bottom: 16px;
+
+		padding: 32px;
+		border-radius: 20px;
+		border: 3px solid rgb(244, 50, 43, 1);
+	}
+
+	.entry:hover{
+		background-color: rgb(95, 140, 213, 0.1);
+		transition-duration: 0.3s;
+	}
+
+	.formUnit{
+		display: inline-block;
+		width: 28%;
+		position: relative;
+		left: 70%;
+
+		backdrop-filter: blur(16px) saturate(100%);
+		background-color: rgba(255, 255, 255, 0.7);
+		border-left: 1px solid white;
+	}
+
+	.formUnit p{
+		margin-bottom: 8px;
+		margin-top: 16px;
+	}
+
+	.entry-warn p{
+		margin-top: 0;
+	}
+
+	.entry-warn input[type=text]{
+		margin-bottom: 10px;
+	}
+
+	input[type=text]{
+		padding: 8px;
+	}
+
+	.tip{
+		display: inline-block;
+		padding: 6px 10px;
+		background-color: rgb(244, 50, 43);
+		border-radius: 8px;
+		color: white;
+		font-size: 18px;
+	}
+
+	#colNum{
+		float: right;
+		display: inline;
+		padding: 8px;
+		margin-right: 6px;
+		color: rgb(95, 140, 213);
+		border-radius: 12px;
+	}
+</style>
+<body>
+    <div class="dataContainer">
+        <h1>上传文件结果</h1>
+		<h1>基于<span>调用sk-learn学习库</span>的数据处理方式</h1>
+
+        <!-- 显示 flash 消息 -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="list-group">
+                    {% for message in messages %}
+                        <li class="list-group-item list-group-item-warning">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        <!-- 显示数据表格 -->
+        <p style="display: inline-block; line-height: 44px;">当前输入的表格头部信息如下</p>
+		<p id="colNum">编号：0</p>
+		<div class="table">
+
+		</div>
+        {{ data|safe }}
+        <p>数据预处理后的数据头部信息如下</p>
+        {{data1|safe}}
+	</div>
+	<div class="formUnit">
+        <form action="/display" method="post"  onsubmit="return checkEmpty(1)">
+			<div class="title">
+				<h3>分类算法学习</h3>
+				<button type="submit" class="btn">提交</button>
+			</div>
+
+			<div class="entry-warn">
+				<p>目标分类预测变量值编号</p>
+				<p class="tip">必填</p>
+				<input type="text" id="destination" name="destination" id="destination">
+			</div>
+
+            <p style="padding: 0 32px">开始机器学习之前请您选择输入的参数，当然您也可以直接提交，系统会按默认参数进行学习</p>
+
+			<div class="entry">
+				<p>目标K近邻算法的考虑的最近邻数量（默认为5）</p>
+				<input type="text" name="K" placeholder="5">
+			</div>
+
+			<div class="entry">
+				<p>目标决策树最大深度（默认为3）</p>
+				<input type="text" name="decision_deep" placeholder="3">
+			</div>
+
+			<div class="entry">
+				<p>目标集成学习的分类器种类</p>
+				<label><input type="radio" name="option" value="RandomForestClassifier" checked="checked">随机森林(默认)</label>
+				<label><input type="radio" name="option" value="GradientBoostingClassifier">梯度提升</label>
+			</div>
+
+			<div class="entry">
+				<p>目标集成学习的基学习器数量（默认为100）</p>
+				<input type="text" name="learn_num" placeholder="100">
+
+				<p>目标集成学习数最大数量（默认为3）</p>
+				<input type="text" name="tree_num" placeholder="3">
+			</div>
+
+			<div class="entry">
+				<p>目标基于人工神经网络的多层感知机隐藏节点结构（请用空格隔开每一层的输入，默认结构为(100,50)</p>
+				<input type="text" name="MLP_num" id="MLP_num" placeholder="100 50">
+
+				<p>定义隐藏层的激活函数。</p>
+				<p>默认为'relu'</p>
+				<label><input type="radio" name="opt" value="indentity">无激活函数（线性激活）</label><br />
+				<label><input type="radio" name="opt" value="logistic">逻辑激活函数</label><br />
+				<label><input type="radio" name="opt" value="tanh">双曲正切激活函数</label><br />
+				<label><input type="radio" name="opt" value="relu"  checked="checked">修正线性单元</label><br />
+
+				<p>定义优化算法，默认为adam</p>
+				<label><input type="radio" name="solver" value="lbfgs">LBFGS</label><br />
+				<label><input type="radio" name="solver" value="sgd">随机梯度下降</label><br />
+				<label><input type="radio" name="solver" value="adam" checked="checked">自适应矩估计</label>
+			</div>
+
+			<div class="entry">
+				<p>目标基于支持向量机的向量机惩罚系数（默认为1.0）</p>
+				<input type="text" name="SVC_num" placeholder="1.0">
+
+				<p>支持向量积指定使用的核函数（默认为高斯核rbf）</p>
+				<label><input type="radio" name="SVC_type" value="linear">线性核</label><br />
+				<label><input type="radio" name="SVC_type" value="poly">多项式核</label><br />
+				<label><input type="radio" name="SVC_type" value="rbf" checked="checked">径向基核（高斯核）</label><br />
+				<label><input type="radio" name="SVC_type" value="sigmoid">Sigmoid核</label><br />
+				<label><input type="radio" name="SVC_type" value="precomputed">预计算核</label><br />
+				<label><input type="checkbox" name="SVC_pro" checked="checked" value="on">是否启用概率估计？（默认为启用）</label><br />
+			</div>
+
+
+        </form>
+		<hr />
+        <form action="display2" method="post" onsubmit="return checkEmpty(2)">
+			<div class="title">
+				<h3>数据特征分析</h3>
+				<button type="submit" class="btn">提交</button>
+			</div>
+
+
+			<div class="entry-warn">
+				<p>目标特征分析的目标变量值编号</p>
+				<p class="tip">必填</p>
+				<input type="text" name="goal" id="goal">
+				<hr>
+			</div>
+
+			<div class="entry">
+				<h4>过滤式策略</h4>
+				<p>低方差过滤下的数据特征选择的方差阈值（默认为0.2）</p>
+				<input type="text" name="VT" placeholder="0.2">
+				<br>
+				<p>高相关过滤下的数据特征选择的特征数量（默认为全部特征的一半。如果您输入的数大于等于全部特征值，则默认为全部）</p>
+				<input type="text" name="SK">
+				<p>相关性评分函数（默认为ANOVA F值）</p>
+				<input type="radio" value="chi2" name="function">卡方检验<br />
+				<input type="radio" value="f_classif" name="function" checked="checked">ANOVA F值<br />
+				<input type="radio" value="mutual_info_classif" name="function">互信息法<br />
+				<input type="radio" value="f_regression" name="function">F值，适用于回归问题<br />
+				<input type="radio" value="mutual_info_regression" name="function">互信息法，适用于回归问题<br />
+				<br>
+				<hr>
+			</div>
+
+			<div class="entry">
+				<h4>包裹式策略</h4>
+				<p>需要保留的特征数量（默认为特征总数的一半）</p>
+				<input type="text" name="now_feature">
+				<p>基础模型对象（默认为线性SVM）</p>
+				<input type="radio" value="Logistic Regression" name="base_obj">逻辑回归<br />
+				<input type="radio" value="Linear Regression" name="base_obj">线性回归<br />
+				<input type="radio" value="Ridge Regression" name="base_obj">岭回归<br />
+				<input type="radio" value="Decision Tree" name="base_obj">决策树<br />
+				<input type="radio" value="Lasso" name="base_obj">Lasso回归<br />
+				<input type="radio" value="Random Forest" name="base_obj">随机森林<br />
+				<input type="radio" value="Gradient Boosting" name="base_obj">梯度提升树<br />
+				<input type="radio" value="XGBoost" name="base_obj">XGBoost <br />
+				<input type="radio" value="SVM" name="base_obj" checked="checked">SVM支持向量机<br />
+				<input type="radio" value="LDA" name="base_obj">线性判别分析<br />
+				<p>每次迭代移除的特征数量</p>
+				<input type="text" name="step">
+
+				<br>
+				<hr>
+			</div>
+
+            <div class="entry">
+
+            	<h4>嵌入式策略</h4>
+            	<p>基于Lasso回归的特征选择</p>
+            	<p>Lasso回归的正则化强度（默认为1.0）</p>
+            	<input type="text" name="Lassonum" placeholder="1.0">
+            	<p>Lasso回归的最大迭代次数（默认为1000）</p>
+            	<input type="text" name="Lassoround" placeholder="1000">
+            	<p>Lasso停止迭代容忍度（默认为0.0001）</p>
+            	<input type="text" name="tol" placeholder="0.0001"><br>
+            	<input type="checkbox" checked="checked" value="on" name="ni">Lasso回归是否拟合截距项（默认是的）
+
+            	<br>
+            	<hr>
+            </div>
+
+            <div class="entry">
+            	<p>基于岭回归的特征选择</p>
+            	<p>岭回归的正则化强度（默认为1.0）</p>
+            	<input type="text" name="lnum" placeholder="1.0">
+            	<p>岭回归的最大迭代次数（默认为1000）</p>
+            	<input type="text" name="lround" placeholder="1000">
+            	<p>岭停止迭代容忍度（默认为0.0001）</p>
+            	<input type="text" name="ltol" placeholder="0.0001"><br /><br />
+            	<input type="checkbox" checked="checked" value="on" name="lni">是否拟合截距项（默认是）<br>
+            	<input type="checkbox" value="off" name="lgui">是否对特征进行归一化（默认否）<br>
+            	<strong>岭回归的特征筛选阈值（重要，涉及特征筛选）（默认为1）</strong><br />
+            	<input type="text" name="llimit" placeholder="1">
+            	<br>
+            	<hr>
+            </div>
+
+            <div class="entry">
+            	<p>基于弹性网的特征选择</p>
+            	<p>弹性网的正则化强度（默认为1.0）</p>
+            	<input type="text" name="softnum" placeholder="1.0">
+            	<p>弹性网的最大迭代次数（默认为1000）</p>
+            	<input type="text" name="softround" placeholder="1000">
+            	<p>L1正则化比例（范围是0~1，默认为0.5。1表示Lasso回归，0表示岭回归。若您的输入小于0我们会视为0，若大于1我们会视为1）</p>
+            	<input type="text" name="softL1" placeholder="0.5">
+            	<p>弹性网停止迭代容忍度（默认为0.0001）</p>
+            	<input type="text" name="softtol" placeholder="0.0001"><br><br />
+            	<input type="checkbox" checked="checked" value="on" name="softni">是否拟合截距项（默认是）<br>
+            	<input type="checkbox" value="off" name="softgui">是否对特征进行归一化（默认否）<br>
+            	<strong>弹性网回归的特征筛选阈值（重要，涉及特征筛选）（默认为0.3）</strong>
+            	<input type="text" name="softlimit" placeholder="0.3">
+            	<br>
+            </div>
+
+
+            <br>
+            <br>
+        </form>
+
+		<hr />
+
+		<form action="display3" method="post" onsubmit="return checkEmpty(3)">
+			<div class="title">
+				<h3>主成分分析</h3>
+				<button type="submit" class="btn">提交</button>
+			</div>
+
+			<div class="entry-warn">
+				<p>目标特征分析的目标变量值编号</p>
+				<p class="tip">必填</p>
+				<input type="text" name="aim" id="aim"><br>
+			</div>
+
+			<div class="entry">
+				<p>指定主成分的数量（默认为总特征的一半）</p><br>
+				<input type="text" name="num"><br><br /><br />
+				<input type="checkbox" value="on" name="white">是否对主成分白化处理（默认否）（白化处理即对主成分进行白化处理，使得每个主成分的方差为 1。）<br><br>
+				<p>用于计算主成分的奇异值分解（SVD）方法</p>
+				<input type="radio" name="solve" value="auto" checked="checked">最优求解器<br>
+				<input type="radio" name="solve" value="full">使用全奇异值分解<br>
+				<input type="radio" name="solve" value="arpack">使用ARPACK算法（适用于稀疏数据）<br>
+				<input type="radio" name="solve" value="randomized">随机化奇异值分解（适用于大数据集）<br>
+				<input type="radio" name="solve" value="flobpcg">局部最佳块共轭梯度方法（适用于系数数据）<br>
+			</div>
+		</form>
+
+		<hr />
+
+		<form action="display4" method="post" onsubmit="return checkEmpty(4)">
+			<div class="title">
+				<h3>聚类分析</h3>
+				<button type="submit" class="btn">提交</button>
+			</div>
+
+			<div class="entry-warn">
+				<h5>请选择聚类分析中目标变量及目标特征的两个特征种类编号</h5>
+				<p class="tip">必填</p><br />
+				<p>目标变量编号</p>
+				<input type="text" name="aim" id="aimZero">
+				<p>第一特征编号</p>
+				<input type="text" name="first" id="aimFirst">
+				<p>第二特征编号</p>
+				<input type="text" name="second" id="aimSecond">
+			</div>
+
+			<div class="entry">
+				<h4>K-均值聚类</h4>
+				<p>要生成的簇的数量（默认为4,我们推荐您输入目标变量的总种类数）</p>
+				<input type="text" name="KCnum" placeholder="4">
+				<p>初始化质心的方法（默认为k-means++）：</p>
+				<input type="checkbox" value="k-means++" name="Kfunc" checked="checked">k - means++方法
+				<input type="checkbox" value="random" name="Kfunc">随机质心
+				<br>
+				<p>用不同的质心种子运行算法的次数（默认为10）：</p>
+				<input type="text" name="KNseed" placeholder="10">
+				<p>每次运行算法的最大迭代次数（默认300）：</p>
+				<input type="text" name="KNd" placeholder="300">
+				<p>收敛的容忍度（默认为0.0001）：</p>
+				<input type="text" name="KNtol" placeholder="0.0001">
+			</div>
+
+		    <div class="entry">
+		    	<h4>系统聚类</h4>
+		    	<p>期望的聚类数量（默认为4）</p>
+		    	<input type="text" name="ACnum" placeholder="4">
+		    	<p>数据点之间相似性的度量（默认为欧几里得距离）</p>
+		    	<input type="radio" value="euclidean" name="ACdistance" checked="checked">欧几里得距离<br />
+		    	<input type="radio" name="ACdistance" value="l1" >L1距离<br />
+		    	<input type="radio" name="ACdistance" value="l2" >L2距离<br />
+		    	<input type="radio" name="ACdistance" value="manhattan" >曼哈顿距离<br />
+		    	<input type="radio" name="ACdistance" value="cosine" >余弦距离<br />
+		    	<p>是否计算完整的层次树？</p>
+		    	<input type="checkbox" value="on" name="fulltree">计算完整的层次树<br />
+		    	<input type="checkbox" value="no" name="fulltree">不计算完整的层次树<br />
+		    	<input type="checkbox" value="auto" name="fulltree">自动判别<br />
+		    </div>
+
+			<div class="entry">
+				<h4>基于高斯分布的EM聚类</h4>
+				<p>混合模型中高斯分布的数量（聚类的数量，默认为4）</p>
+				<input type="text" name="EMnum" placeholder="4">
+				<p>协方差矩阵的类型（默认为每个组件都有自己的协方差矩阵）</p>
+				<input type="radio" value="full" checked="checked" name="type_of_EM">每个组件都有自己的协方差矩阵<br />
+				<input type="radio" value="tied" name="type_of_EM">所有组件共享一个协方差矩阵<br />
+				<input type="radio" value="spherical" name="type_of_EM">球形协方差矩阵<br />
+				<input type="radio" value="diag" name="type_of_EM">对角协方差矩阵<br />
+				<p>每次运行算法的最大迭代次数（默认100）：</p>
+				<input type="text" name="EMd" placeholder="100">
+				<p>收敛的容忍度（默认为0.001）：</p>
+				<input type="text" name="EMtol" placeholder="0.001">
+			</div>
+
+			<div class="entry">
+				<h3>DBSCAN特色聚类</h3>
+				<p>邻域半径（默认为0.05）</p>
+				<input type="text" name="DBr" placeholder="0.05">
+				<p>成为核心点所需的最小邻近点数（默认为15）</p>
+				<input type="text" name="DBcenter" placeholder="15">
+				<p>计算邻域点的算法（默认为自动识别）</p>
+				<input type="radio" name="DBalg" value="auto" checked="checked">自动识别
+				<input type="radio" name="DBalg" value="ball_tree">ball_tree
+				<input type="radio" name="DBalg" value="kd_tree">kd_tree
+				<input type="radio" name="DBalg" value="brute">brute
+			</div>
+		</form>
+
+    </div>
+</body>
+<script>
+	function checkEmpty(type){
+		var elementId = ['', 'destination', 'goal', 'aim', 'aimZero', 'aimFirst', 'aimSecond'];
+		if (type < 4){
+			var inputFrame = document.getElementById(elementId[type]);
+			if (inputFrame.value == ''){
+				alert("必填项缺省\n需要填写分类目标");
+				inputFrame.focus();
+				return false;
+			}
+		}else{
+			for (var i = 0;i < 3;i++){
+				var inputFrame = document.getElementById(elementId[type + i]);
+				if (inputFrame.value == ''){
+					alert("必填项缺省\n需要填写编号");
+					inputFrame.focus();
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	var tds = document.getElementsByTagName("td");
+	for (var i = 0;i < tds.length;i++){
+		tds[i].addEventListener("mouseover", function(e) {
+			var child = e.target;
+			var parent = child.parentNode;
+			var colNum = Array.prototype.indexOf.call(parent.children, child);
+
+			var colSuggestion = document.getElementById("colNum");
+			colSuggestion.innerHTML = "列编号：" + String(colNum);
+			colSuggestion.style.display = "inline-block";
+		});
+
+		tds[i].addEventListener("mouseout", function(e) {
+			var colSuggestion = document.getElementById("colNum");
+			colSuggestion.style.display = "none";
+		});
+	}
+
+	var ths = document.getElementsByTagName("th");
+	for (var i = 0;i < ths.length;i++){
+		ths[i].addEventListener("mouseover", function(e) {
+			var child = e.target;
+			var parent = child.parentNode;
+			var colNum = Array.prototype.indexOf.call(parent.children, child);
+
+			var colSuggestion = document.getElementById("colNum");
+			colSuggestion.innerHTML = "列编号：" + String(colNum);
+			colSuggestion.style.display = "inline-block";
+		});
+
+		ths[i].addEventListener("mouseout", function(e) {
+			var colSuggestion = document.getElementById("colNum");
+			colSuggestion.style.display = "none";
+		});
+	}
+
+</script>
+</html>

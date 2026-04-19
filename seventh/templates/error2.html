@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>500错误提示</title>
+</head>
+<style>
+    body{
+      margin:0
+      background-color:#14e6f0;
+  }
+  #all{
+    margin:0 auto;
+    width:1000px;
+    height:800px;
+    border:2px solid white;
+<!--    display:flex;-->
+<!--    justify-content: center;-->
+<!--    align-items: center;-->
+  }
+  #bigerror{
+    font-size:25px;
+    font-weight:650;
+    color:red;
+  }
+  p,li{
+    font-size:18px;
+    font-weight:580;
+  }
+  ul{
+    text-decoration:none;
+  }
+    span{
+        font-size:30px;
+        font-weight:650;
+        color:red;
+    }
+</style>
+<body>
+    <div id="all">
+    <p id="bigerror">出现了后端错误！</p>
+    <p>请您检查，在文件读取与机器学习参数预输入时是否有以下情况：</p>
+    <ul>
+        <li><span>最重要的，您是否没有上传文件就按提交按钮并且尝试进入分析页面？</span></li>
+        <li>1.在分类机器算法中没有输入具体目标特征的编号</li>
+        <li>2.所选的目标特征在原数据集中是连续的（如特征种类大于总特征数据长度的50%，或目标特征是日期、坐标轴数据等连续的内容）</li>
+        <li>注：目标特征数据是浮点数数据不影响数据读取，我们有专门对目标为浮点数的数据的预处理</li>
+        <li>3.您所输入的具体特征的编号超出了列表的范围</li>
+        <li>4.某些需要您谨慎填写的参数您是否扩大化或戏谑化地填写了</li>
+        <li>5.可能您在使用特征选择后得出的数据过于严苛，不足以让您所选择的分类器工作</li>
+        <li>6.可能您的数据不满足特征聚类的参数输入而您又强制提交</li>
+        <li><strong>7.可能是后端在读取的时候发生了读取错误导致索引溢出或者索引读取失效，这需要您重新启动程序进行尝试</strong></li>
+    </ul>
+
+  </div>
+</body>
+</html>

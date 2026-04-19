@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>结果分析</title>
+</head>
+<style>
+    *{
+        transition:color 0.6s ease,border 0.5s ease,box-shadow 0.4s ease,width 0.4s ease,font-size 0.5s ease,font-weight 0.5s ease,background-color 0.5s ease;
+    }
+    body{
+        margin:0;
+        background-color:#efe0a9;
+    }
+    #answer_of_all{
+        margin:0 auto;
+        border:1px solid orange;
+        box-shadow:0px 0px 0px 0px #000;
+        width:950px;
+        height:18000px;
+        background-color:#d5efa9;
+        font-size:18px;
+        font-weight:500;
+
+    }
+    .answer{
+        width:100%;
+        height:auto;
+        background-color:#afff05;
+        box-shadow:0px 0px 0px 0px #000;
+        font-size:18px;
+        font-weight:500;
+        color:#4a404f;
+    }
+    .answer:hover{
+        border:5px solid #efa9d7;
+        box-shadow:5px 6px 4px 5px #000;
+        font-size:22px;
+        font-weight:600;
+        background-color:#66ffd7;
+        color:black;
+    }
+    p{
+        margin-left:30px;
+    }
+    h1{
+        margin-left:200px
+</style>
+<body>
+    <div id="answer_of_all">
+        <h1>{{dataname}}各分类器针对数据的测试与预测结果</h1>
+        <div class="answer">
+            <h2>&nbsp;&nbsp;基于朴素贝叶斯的分类数据分析</h2>
+            <p>准确率：{{BYS[0]}}</p>
+            <p>精确率：{{BYS[1]}}</p>
+            <p>召回率：{{BYS[2]}}</p>
+            <p>F1分数：{{BYS[3]}}</p>
+            <p>混淆矩阵：{{BYS[4]|safe}}</p>
+            <p>训练误差：{{BYS[5]|safe}}</p>
+            <p>测试误差：{{BYS[6]}}</p>
+<!--            <p>ROC曲线如下：</p>-->
+<!--            <img src="./static/BYS_img.png">-->
+        </div>
+        <br><br>
+        <div class="answer">
+        <h2>&nbsp;&nbsp;基于{{k}}-近邻法下的分类数据分析</h2>
+            <p>准确率：{{KNN[0]}}</p>
+            <p>精确率：{{KNN[1]}}</p>
+            <p>召回率：{{KNN[2]}}</p>
+            <p>F1分数：{{KNN[3]}}</p>
+            <p>混淆矩阵：{{KNN[4]|safe}}</p>
+            <p>训练误差：{{KNN[5]|safe}}</p>
+            <p>测试误差：{{KNN[6]}}</p>
+            <p>ROC曲线如下：</p>
+            <img src="./static/KNN_img.png">
+        </div>
+        <br><br>
+        <div class="answer">
+            <h2>&nbsp;&nbsp;基于{{dedeep}}-层决策树算法下的分类数据分析</h2>
+            <p>准确率：{{detree[0]}}</p>
+            <p>精确率：{{detree[1]}}</p>
+            <p>召回率：{{detree[2]}}</p>
+            <p>F1分数：{{detree[3]}}</p>
+            <p>混淆矩阵：{{detree[4]|safe}}</p>
+            <p>训练误差：{{detree[5]|safe}}</p>
+            <p>测试误差：{{detree[6]}}</p>
+<!--            <p>ROC曲线如下：</p>-->
+<!--            <img src="./static/DTC_img.png">-->
+        </div>
+        <br><br>
+        <div class="answer">
+            <h2>&nbsp;&nbsp;基于{{together_name}}方法的{{learn_num}}数量基学习器以及{{tree_num}}层最大深度的集成学习算法下的分类数据分析</h2>
+            <p>准确率：{{one[0]}}</p>
+            <p>精确率：{{one[1]}}</p>
+            <p>召回率：{{one[2]}}</p>
+            <p>F1分数：{{one[3]}}</p>
+            <p>混淆矩阵：{{one[4]|safe}}</p>
+            <p>训练误差：{{one[5]|safe}}</p>
+            <p>测试误差：{{one[6]}}</p>
+<!--            <p>ROC曲线如下：</p>-->
+<!--            <img src="./static/clf_img.png">-->
+        </div>
+        <br><br>
+        <div class="answer">
+            <h2>&nbsp;&nbsp;基于{{Net_num}}层下的以{{func_name}}为激活函数、以{{you_name}}为优化算法的多层感知机分类算法下的分类数据分析</h2>
+            <p>准确率：{{Net[0]}}</p>
+            <p>精确率：{{Net[1]}}</p>
+            <p>召回率：{{Net[2]}}</p>
+            <p>F1分数：{{Net[3]}}</p>
+            <p>混淆矩阵：{{Net[4]|safe}}</p>
+            <p>训练误差：{{Net[5]|safe}}</p>
+            <p>测试误差：{{Net[6]}}</p>
+<!--            <p>ROC曲线如下：</p>-->
+<!--            <img src="./static/net_img.png">-->
+        </div>
+        <br><br>
+        <div class="answer">
+            <h2>&nbsp;&nbsp;基于以{{svc_func_name}}为核函数、惩罚系数为{{C}}、{{svc_pro_name}}进行概率估计的支持向量机下的分类数据分析</h2>
+            <p>准确率：{{svc[0]}}</p>
+            <p>精确率：{{svc[1]}}</p>
+            <p>召回率：{{svc[2]}}</p>
+            <p>F1分数：{{svc[3]}}</p>
+            <p>混淆矩阵：{{svc[4]|safe}}</p>
+            <p>训练误差：{{svc[5]|safe}}</p>
+            <p>测试误差：{{svc[6]}}</p>
+<!--            <p>ROC曲线如下：</p>-->
+<!--            <img src="./static/svc_img.png">-->
+        </div>
+    </div>
+</body>
+</html>
